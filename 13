@@ -1,0 +1,19 @@
+# Parking Fee Calculator
+
+vehicle = input("Enter Vehicle Type (Bike/Car/Bus): ")
+hours = int(input("Enter Parking Hours: "))
+
+if vehicle == "Bike":
+    fee = hours * 20
+
+elif vehicle == "Car":
+    fee = hours * 50
+
+elif vehicle == "Bus":
+    fee = hours * 100
+
+else:
+    fee = 0
+    print("Invalid Vehicle Type")
+
+print("Parking Fee =", round(fee,2))
