@@ -1,0 +1,9 @@
+# Weather Data Analyzer
+
+temp = [30, 32, 31, 29, 35, 33, 28]
+
+print("Temperatures =", temp)
+
+print("Maximum Temperature =", max(temp))
+print("Minimum Temperature =", min(temp))
+print("Average Temperature =", round(sum(temp)/len(temp),2))
