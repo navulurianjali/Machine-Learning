@@ -1,0 +1,17 @@
+# Mobile Recharge Billing
+
+amount = float(input("Enter Recharge Amount: "))
+
+if amount >= 1000:
+    cashback = amount * 0.20
+
+elif amount >= 500:
+    cashback = amount * 0.10
+
+else:
+    cashback = amount * 0.05
+
+final = amount - cashback
+
+print("Cashback =", round(cashback,2))
+print("Final Amount =", round(final,2))
