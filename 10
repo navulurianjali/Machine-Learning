@@ -1,0 +1,16 @@
+# Railway Ticket Fare Calculator
+
+fare = float(input("Enter Ticket Fare: "))
+age = int(input("Enter Passenger Age: "))
+
+if age < 5:
+    final_fare = 0
+
+elif age >= 60:
+    discount = fare * 0.30
+    final_fare = fare - discount
+
+else:
+    final_fare = fare
+
+print("Final Ticket Fare =", round(final_fare, 2))
