@@ -1,0 +1,10 @@
+# Inventory Stock Management
+
+product = input("Enter Product Name: ")
+stock = int(input("Enter Stock Quantity: "))
+
+if stock < 10:
+    print("Low Stock Alert")
+
+else:
+    print("Stock Available")
