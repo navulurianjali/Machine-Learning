@@ -1,0 +1,21 @@
+# Movie Ticket Booking System
+
+tickets = int(input("Enter Number of Tickets: "))
+seat = input("Enter Seat Type (Regular/Premium/VIP): ")
+
+if seat == "Regular":
+    price = 150
+
+elif seat == "Premium":
+    price = 250
+
+elif seat == "VIP":
+    price = 400
+
+else:
+    price = 0
+    print("Invalid Seat Type")
+
+total = tickets * price
+
+print("Total Ticket Cost =", round(total,2))
