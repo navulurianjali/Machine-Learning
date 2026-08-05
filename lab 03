@@ -1,0 +1,61 @@
+import pandas as pd
+from sklearn.preprocessing import LabelEncoder
+from sklearn.tree import DecisionTreeClassifier
+
+
+data = pd.DataFrame({
+    'Income': ['High', 'High', 'Medium', 'Low', 'Low', 'Medium', 'High', 'Low'],
+    'Credit': ['Good', 'Bad', 'Good', 'Good', 'Bad', 'Bad', 'Good', 'Bad'],
+    'Property': ['Yes', 'Yes', 'No', 'No', 'No', 'Yes', 'Yes', 'No'],
+    'Loan': ['Approved', 'Rejected', 'Approved', 'Approved',
+             'Rejected', 'Rejected', 'Approved', 'Rejected']
+})
+
+print("Training Dataset:\n")
+print(data)
+
+
+X = data.iloc[:, :-1].copy()
+y = data.iloc[:, -1].copy()
+
+
+encoders = {}
+
+for column in X.columns:
+    le = LabelEncoder()
+    X[column] = le.fit_transform(X[column])
+    encoders[column] = le
+
+target_encoder = LabelEncoder()
+y = target_encoder.fit_transform(y)
+
+
+model = DecisionTreeClassifier(criterion='entropy', random_state=42)
+model.fit(X, y)
+
+print("\nDecision Tree Model Trained Successfully!")
+
+
+print("\nEnter Details for Prediction")
+
+income = input("Income (High/Medium/Low): ")
+credit = input("Credit (Good/Bad): ")
+property_owner = input("Property (Yes/No): ")
+
+
+sample = pd.DataFrame({
+    'Income': [income],
+    'Credit': [credit],
+    'Property': [property_owner]
+})
+
+for column in sample.columns:
+    sample[column] = encoders[column].transform(sample[column])
+
+
+prediction = model.predict(sample)
+
+result = target_encoder.inverse_transform(prediction)
+
+print("\nPrediction")
+print("Loan Status:", result[0])
