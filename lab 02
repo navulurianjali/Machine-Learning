@@ -1,0 +1,45 @@
+import pandas as pd
+
+# Dataset
+data = pd.DataFrame({
+    'Attendance':['High','High','Low','High','Low','High'],
+    'Assignment':['Yes','Yes','No','Yes','No','Yes'],
+    'Study':['Good','Average','Poor','Good','Poor','Average'],
+    'Internet':['Yes','Yes','No','Yes','No','Yes'],
+    'Result':['Pass','Pass','Fail','Pass','Fail','Pass']
+})
+
+concepts = data.iloc[:, :-1].values
+target = data.iloc[:, -1].values
+
+specific = concepts[0].copy()
+
+general = [['?' for i in range(len(specific))]
+           for j in range(len(specific))]
+
+for i, h in enumerate(concepts):
+
+    if target[i] == "Pass":
+        for x in range(len(specific)):
+            if h[x] != specific[x]:
+                specific[x] = '?'
+                general[x][x] = '?'
+
+    if target[i] == "Fail":
+        for x in range(len(specific)):
+            if h[x] != specific[x]:
+                general[x][x] = specific[x]
+            else:
+                general[x][x] = '?'
+
+general = [g for g in general if g != ['?']*len(specific)]
+
+print("Training Data\n")
+print(data)
+
+print("\nSpecific Hypothesis")
+print(specific)
+
+print("\nGeneral Hypothesis")
+for g in general:
+    print(g)
