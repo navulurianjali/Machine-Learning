@@ -1,0 +1,64 @@
+from sklearn.datasets import load_iris
+from sklearn.model_selection import train_test_split
+from sklearn.neighbors import KNeighborsClassifier
+from sklearn.preprocessing import StandardScaler
+from sklearn.metrics import accuracy_score
+
+iris = load_iris()
+
+X = iris.data
+y = iris.target
+
+X_train, X_test, y_train, y_test = train_test_split(
+    X, y, test_size=0.3, random_state=42
+)
+
+scaler = StandardScaler()
+
+X_train = scaler.fit_transform(X_train)
+X_test = scaler.transform(X_test)
+
+model = KNeighborsClassifier(n_neighbors=3)
+
+model.fit(X_train, y_train)
+
+prediction = model.predict(X_test)
+
+print("Accuracy =", accuracy_score(y_test, prediction))
+
+print("\nCorrect Predictions")
+
+for i in range(len(y_test)):
+    if prediction[i] == y_test[i]:
+        print("Actual:", iris.target_names[y_test[i]],
+              " Predicted:", iris.target_names[prediction[i]])
+
+print("\nWrong Predictions")
+
+wrong = False
+
+for i in range(len(y_test)):
+    if prediction[i] != y_test[i]:
+        wrong = True
+        print("Actual:", iris.target_names[y_test[i]],
+              " Predicted:", iris.target_names[prediction[i]])
+
+if not wrong:
+    print("No Wrong Predictions")
+
+print("\nEnter Flower Details")
+
+sl = float(input("Sepal Length: "))
+sw = float(input("Sepal Width : "))
+pl = float(input("Petal Length: "))
+pw = float(input("Petal Width : "))
+
+sample = [[sl, sw, pl, pw]]
+
+sample = scaler.transform(sample)
+
+result = model.predict(sample)
+
+print("\nPrediction")
+
+print("Flower:", iris.target_names[result][0])
