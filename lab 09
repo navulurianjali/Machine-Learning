@@ -1,0 +1,50 @@
+import numpy as np
+import matplotlib.pyplot as plt
+from sklearn.linear_model import LinearRegression
+from sklearn.preprocessing import PolynomialFeatures
+from sklearn.metrics import mean_squared_error, r2_score
+
+hours = np.array([1, 2, 3, 4, 5, 6, 7, 8, 9, 10]).reshape(-1, 1)
+scores = np.array([35, 40, 45, 52, 60, 68, 78, 82, 91, 96])
+
+linear_model = LinearRegression()
+linear_model.fit(hours, scores)
+
+linear_pred = linear_model.predict(hours)
+
+# Polynomial Regression
+poly = PolynomialFeatures(degree=2)
+hours_poly = poly.fit_transform(hours)
+
+poly_model = LinearRegression()
+poly_model.fit(hours_poly, scores)
+
+poly_pred = poly_model.predict(hours_poly)
+
+# Evaluation
+print("Linear Regression")
+print("R2 Score:", round(r2_score(scores, linear_pred), 3))
+print("MSE:", round(mean_squared_error(scores, linear_pred), 3))
+
+print("\nPolynomial Regression")
+print("R2 Score:", round(r2_score(scores, poly_pred), 3))
+print("MSE:", round(mean_squared_error(scores, poly_pred), 3))
+
+# Prediction
+new_hours = np.array([[7.5]])
+
+print("\nPredicted Score for 7.5 hours:")
+print("Linear Regression:", round(linear_model.predict(new_hours)[0], 2))
+print("Polynomial Regression:",
+      round(poly_model.predict(poly.transform(new_hours))[0], 2))
+
+# Visualization
+plt.scatter(hours, scores, label="Actual Data")
+plt.plot(hours, linear_pred, label="Linear Regression")
+plt.plot(hours, poly_pred, label="Polynomial Regression")
+
+plt.xlabel("Study Hours")
+plt.ylabel("Exam Score")
+plt.title("Linear vs Polynomial Regression")
+plt.legend()
+plt.show()
