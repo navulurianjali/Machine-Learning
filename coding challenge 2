@@ -1,0 +1,304 @@
+import math
+
+# -----------------------------------------
+# Logistic Regression
+# Customer Premium Subscription Prediction
+# -----------------------------------------
+
+# Features:
+# Monthly Usage (hours)
+# Number of Sessions
+# Average Session Duration (minutes)
+# Previous Purchases
+
+X = [
+    [4, 12, 15, 0],
+    [5, 15, 18, 0],
+    [6, 18, 20, 1],
+    [7, 20, 22, 1],
+    [8, 23, 25, 1],
+    [10, 28, 30, 2],
+    [12, 32, 34, 2],
+    [14, 36, 38, 3],
+    [16, 40, 42, 3],
+    [18, 45, 46, 4],
+    [20, 48, 50, 5],
+    [22, 52, 55, 5],
+    [24, 56, 58, 6],
+    [26, 60, 62, 7],
+    [28, 64, 65, 8]
+]
+
+# Target:
+# 0 = No Premium Subscription
+# 1 = Premium Subscription
+
+y = [
+    0, 0, 0, 0, 0,
+    1, 1, 1, 1, 1,
+    1, 1, 1, 1, 1
+]
+
+
+# -----------------------------------------
+# Normalize Data
+# -----------------------------------------
+
+def normalize(X):
+
+    rows = len(X)
+    columns = len(X[0])
+
+    means = []
+    stds = []
+
+    for j in range(columns):
+
+        column = []
+
+        for i in range(rows):
+            column.append(X[i][j])
+
+        mean = sum(column) / rows
+
+        variance = 0
+
+        for value in column:
+            variance += (value - mean) ** 2
+
+        variance = variance / rows
+
+        std = math.sqrt(variance)
+
+        means.append(mean)
+        stds.append(std)
+
+    X_new = []
+
+    for row in X:
+
+        new_row = []
+
+        for j in range(columns):
+
+            value = (row[j] - means[j]) / stds[j]
+
+            new_row.append(value)
+
+        X_new.append(new_row)
+
+    return X_new
+
+
+# -----------------------------------------
+# Sigmoid Function
+# -----------------------------------------
+
+def sigmoid(z):
+
+    return 1 / (1 + math.exp(-z))
+
+
+# -----------------------------------------
+# Train Logistic Regression
+# -----------------------------------------
+
+def train(X, y, learning_rate, epochs):
+
+    rows = len(X)
+    columns = len(X[0])
+
+    weights = [0.0] * columns
+    bias = 0.0
+
+    for epoch in range(epochs):
+
+        weight_gradient = [0.0] * columns
+        bias_gradient = 0.0
+
+        for i in range(rows):
+
+            z = bias
+
+            for j in range(columns):
+                z += weights[j] * X[i][j]
+
+            prediction = sigmoid(z)
+
+            error = prediction - y[i]
+
+            for j in range(columns):
+                weight_gradient[j] += error * X[i][j]
+
+            bias_gradient += error
+
+        # Update weights
+        for j in range(columns):
+
+            weights[j] -= (
+                learning_rate *
+                weight_gradient[j] / rows
+            )
+
+        # Update bias
+        bias -= learning_rate * bias_gradient / rows
+
+    return weights, bias
+
+
+# -----------------------------------------
+# Prediction
+# -----------------------------------------
+
+def predict(X, weights, bias):
+
+    probabilities = []
+    predictions = []
+
+    for row in X:
+
+        z = bias
+
+        for j in range(len(row)):
+            z += weights[j] * row[j]
+
+        probability = sigmoid(z)
+
+        if probability >= 0.5:
+            predicted_class = 1
+        else:
+            predicted_class = 0
+
+        probabilities.append(probability)
+        predictions.append(predicted_class)
+
+    return probabilities, predictions
+
+
+# -----------------------------------------
+# Normalize Dataset
+# -----------------------------------------
+
+X_normalized = normalize(X)
+
+
+# -----------------------------------------
+# Training and Testing Data
+# -----------------------------------------
+
+X_train = X_normalized[:11]
+y_train = y[:11]
+
+X_test = X_normalized[11:]
+y_test = y[11:]
+
+
+# -----------------------------------------
+# User Input Learning Rate
+# -----------------------------------------
+
+learning_rate = float(input("Enter learning rate: "))
+
+epochs = 1000
+
+
+# Train Model
+weights, bias = train(
+    X_train,
+    y_train,
+    learning_rate,
+    epochs
+)
+
+
+# Predict Test Data
+probabilities, predictions = predict(
+    X_test,
+    weights,
+    bias
+)
+
+
+# -----------------------------------------
+# Display Results
+# -----------------------------------------
+
+print("\nLOGISTIC REGRESSION RESULTS")
+print("-----------------------------")
+
+for i in range(len(X_test)):
+
+    print("\nTest Instance:", i + 1)
+    print("Actual Class:", y_test[i])
+
+    print(
+        "Sigmoid Output:",
+        round(probabilities[i], 4)
+    )
+
+    print(
+        "Predicted Class:",
+        predictions[i]
+    )
+
+
+# -----------------------------------------
+# Accuracy
+# -----------------------------------------
+
+correct = 0
+
+for i in range(len(y_test)):
+
+    if predictions[i] == y_test[i]:
+        correct += 1
+
+accuracy = correct / len(y_test)
+
+
+print("\n-----------------------------")
+print("Actual Values:", y_test)
+print("Predicted Values:", predictions)
+print("Accuracy:", round(accuracy, 3))
+print("-----------------------------")
+
+
+# -----------------------------------------
+# Learning Rate Comparison
+# -----------------------------------------
+
+print("\nLEARNING RATE COMPARISON")
+print("-----------------------------")
+
+learning_rates = [0.001, 0.01, 0.1, 0.5]
+
+for lr in learning_rates:
+
+    w, b = train(
+        X_train,
+        y_train,
+        lr,
+        epochs
+    )
+
+    probability, prediction = predict(
+        X_test,
+        w,
+        b
+    )
+
+    correct = 0
+
+    for i in range(len(y_test)):
+
+        if prediction[i] == y_test[i]:
+            correct += 1
+
+    acc = correct / len(y_test)
+
+    print(
+        "Learning Rate:",
+        lr,
+        " Accuracy:",
+        round(acc, 3)
+    )
