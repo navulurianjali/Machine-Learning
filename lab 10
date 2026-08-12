@@ -1,0 +1,57 @@
+import numpy as np
+import matplotlib.pyplot as plt
+from sklearn.mixture import GaussianMixture
+
+# Customer spending dataset
+data = np.array([
+    [20, 25],
+    [22, 28],
+    [24, 30],
+    [25, 27],
+    [27, 32],
+    [45, 65],
+    [48, 70],
+    [50, 68],
+    [52, 72],
+    [55, 75],
+    [70, 30],
+    [72, 35],
+    [75, 32],
+    [78, 38],
+    [80, 40]
+])
+
+# Apply Expectation-Maximization using Gaussian Mixture Model
+model = GaussianMixture(
+    n_components=3,
+    random_state=42
+)
+
+model.fit(data)
+
+# Predict cluster for each customer
+clusters = model.predict(data)
+
+print("Customer Data and Cluster:")
+for i in range(len(data)):
+    print(
+        "Customer", i + 1,
+        "Income:", data[i][0],
+        "Spending Score:", data[i][1],
+        "Cluster:", clusters[i]
+    )
+
+print("\nCluster Means:")
+print(model.means_)
+
+# Visualization
+plt.scatter(
+    data[:, 0],
+    data[:, 1],
+    c=clusters
+)
+
+plt.xlabel("Annual Income")
+plt.ylabel("Spending Score")
+plt.title("Customer Segmentation using EM Algorithm")
+plt.show()
