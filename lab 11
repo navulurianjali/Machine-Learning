@@ -1,0 +1,137 @@
+import pandas as pd
+from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import StandardScaler
+from sklearn.linear_model import LogisticRegression
+from sklearn.metrics import accuracy_score, confusion_matrix, classification_report
+
+# Credit Score Dataset
+data = {
+    "Age": [
+        21, 23, 25, 27, 29, 31, 33, 35, 37, 39,
+        41, 43, 45, 47, 49, 51, 53, 55, 28, 32,
+        36, 40, 44, 48, 52, 26, 30, 34, 38, 42
+    ],
+
+    "Income": [
+        22000, 25000, 28000, 30000, 32000, 35000, 38000, 40000,
+        42000, 45000, 48000, 50000, 55000, 58000, 60000, 65000,
+        70000, 75000, 36000, 43000, 47000, 52000, 57000, 62000,
+        68000, 27000, 34000, 39000, 46000, 54000
+    ],
+
+    "LoanAmount": [
+        18000, 20000, 22000, 24000, 25000, 26000, 27000, 28000,
+        29000, 30000, 31000, 32000, 33000, 34000, 35000, 36000,
+        37000, 38000, 23000, 28000, 30000, 31000, 33000, 35000,
+        36000, 21000, 25000, 28000, 30000, 32000
+    ],
+
+    "CreditHistory": [
+        0, 0, 0, 0, 0, 0, 1, 1, 1, 1,
+        1, 1, 1, 1, 1, 1, 1, 1, 0, 1,
+        1, 1, 1, 1, 1, 0, 0, 1, 1, 1
+    ],
+
+    "CreditScore": [
+        "Poor", "Poor", "Poor", "Poor", "Poor",
+        "Average", "Average", "Average", "Average", "Average",
+        "Average", "Average", "Good", "Good", "Good",
+        "Good", "Good", "Good", "Poor", "Average",
+        "Average", "Good", "Good", "Good", "Good",
+        "Poor", "Poor", "Average", "Average", "Good"
+    ]
+}
+
+# Create DataFrame
+df = pd.DataFrame(data)
+
+print("Credit Score Dataset:")
+print(df)
+
+# Convert Credit Score into numerical values
+df["CreditScore"] = df["CreditScore"].map({
+    "Poor": 0,
+    "Average": 1,
+    "Good": 2
+})
+
+# Input and output
+X = df.drop("CreditScore", axis=1)
+y = df["CreditScore"]
+
+# Split the dataset
+X_train, X_test, y_train, y_test = train_test_split(
+    X,
+    y,
+    test_size=0.3,
+    random_state=42,
+    stratify=y
+)
+
+# Standardization
+scaler = StandardScaler()
+
+X_train = scaler.fit_transform(X_train)
+X_test = scaler.transform(X_test)
+
+# Logistic Regression model
+model = LogisticRegression(max_iter=1000)
+
+# Train the model
+model.fit(X_train, y_train)
+
+# Predict test data
+y_pred = model.predict(X_test)
+
+# Display actual and predicted values
+print("\nActual Values:")
+print(y_test.values)
+
+print("\nPredicted Values:")
+print(y_pred)
+
+# Accuracy
+accuracy = accuracy_score(y_test, y_pred)
+
+print("\nAccuracy:",
+      round(accuracy, 3))
+
+# Confusion Matrix
+print("\nConfusion Matrix:")
+print(confusion_matrix(
+    y_test,
+    y_pred,
+    labels=[0, 1, 2]
+))
+
+# Classification Report
+print("\nClassification Report:")
+print(classification_report(
+    y_test,
+    y_pred,
+    labels=[0, 1, 2],
+    target_names=["Poor", "Average", "Good"],
+    zero_division=0
+))
+
+# Predict a new customer
+new_customer = [[30, 45000, 25000, 1]]
+
+new_customer = scaler.transform(new_customer)
+
+prediction = model.predict(new_customer)
+
+credit_labels = {
+    0: "Poor",
+    1: "Average",
+    2: "Good"
+}
+
+print("\nNew Customer Details:")
+print("Age: 30")
+print("Income: 45000")
+print("Loan Amount: 25000")
+print("Credit History: Good")
+
+print("\nPredicted Credit Score:",
+      credit_labels[prediction[0]])
